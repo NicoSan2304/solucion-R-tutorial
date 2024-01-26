@@ -1,56 +1,35 @@
 library(shiny)
 library(tidyverse)
+library(plotly)
+library(tidyverse)
 
 feminicidios <- read.csv("cases_2017.csv", na.strings = c("Sin información","NA"))
 
 modalidad <- unique(feminicidios$modalidad)
 feminicidios$modalidad[is.na(feminicidios$modalidad)] <- "No hay información"
-departamento <- unique(feminicidios$departamento)
-relacion <- unique(feminicidios$relacion_victima)
-edad <- unique(feminicidios$edad)
-min(edad)
-max(edad)
 
 ui <- fluidPage(
   
-  # App title ----
+  # Título de la aplicación
   titlePanel("Feminicidios en colombia 2017"),
   
-  # Sidebar layout with a input and output definitions ----
+  # Definicion de los Inputs y los Outputs
   sidebarLayout(
     
     # Sidebar panel for inputs ----
     sidebarPanel(
       
-      # Input: Selector for choosing dataset ----
-      selectInput(inputId = "feminicidios",
+      # Explicación de cuales son los inputs
+      selectInput(inputId = "modalidades",
                   label = "Tipo de modalidad:",
-                  choices = modalidad),
+                  choices = modalidad, multiple = T),
       
-      # Input: Selector for choosing dataset ----
-      selectInput(inputId = "feminicidios",
-                   label = "Seleccione el departamento:",
-                   choices = departamento),
-      # Input: Selector for choosing dataset ----
-      selectInput(inputId = "feminicidios",
-                  label = "Relación existente entre la victima y su agresor:",
-                  choices = relacion),
-      sliderInput(inputId = "femenicidios",
-                   label = "Rango de edad",
-                   min(0, na.rm = 0), max(100, na.rm = 0), value = c(20,50))
-      # Input: Numeric entry for number of obs to view ----
-      numericInput(inputId = "feminicidios",
-                   label = "Number of observations to view:",
-                   value = 10)
     ),
-    # Main panel for displaying outputs ----
+    # Panel para los outputs
     mainPanel(
       
-      # Output: Verbatim text for data summary ----
-      verbatimTextOutput("summary"),
-      
-      # Output: HTML table with requested number of observations ----
-      tableOutput("view")
+      # Output que muestra el panel de la modalidad escogida por el usuario
+      plotlyOutput("numModalidad")
       
     )
   )
@@ -59,26 +38,28 @@ ui <- fluidPage(
 # Define server logic to summarize and view selected dataset ----
 server <- function(input, output) {
   
-  # Return the requested dataset ----
-  feminicidiosInput <- reactive({
-    switch(input$obs,
-           "modalidad" = modalidad,
-           "departamento" = departamento,
-           "relacion" = relacion)
-  })
+  data_viz <- reactive({
+    df <- feminicidios
+    if (!is.null(input$modalidades)) {
+      df <- df %>% 
+        dplyr::filter(modalidad %in% input$modalidades)
+    }
+    casos_1 <-  df %>%
+      group_by(modalidad) %>%
+      tally() %>%
+      select(modalidad, n)
+    casos_1
+  })  
   
-  # Generate a summary of the dataset ----
-  output$summary <- renderPrint({
-    feminicidios <- feminicidiosInput()
-    summary(feminicidios)
-  })
   
-  # Show the first "n" observations ----
-  output$view <- renderTable({
-    head(feminicidiosInput(), n = input$obs))
-  }
+  output$numModalidad <- renderPlotly({
+    req(data_viz())
+    plot_ly(data_viz(), x = ~modalidad, y = ~n, type = "bar")
+  })
   
 }
 
-# Create Shiny app ----
+# Creación y visualización de la aplicación Shiny
 shinyApp(ui = ui, server = server)
+
+
