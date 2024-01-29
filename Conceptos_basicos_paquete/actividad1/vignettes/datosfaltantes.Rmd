@@ -1,0 +1,49 @@
+---
+title: "Clasificación de datos"
+author: "Nicolas Sanchez"
+date: "01/26/2024"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Clasificación de datos}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Esta vignette esta compuyesta de dos funciones. La primera enfocada a la exploración y visualización de datos perdidos. La segunda creada con la finalidad de clasificar las columnas de un data.frame.
+
+## Datos faltantes
+Esta función recibe un Dataframe y realiza una exploración por cada uno de los datos 
+para definir cuantos valores NA hay en cada columna, devolviendo un mensaje al usuario.
+
+```{r, echo=FALSE}
+datos_faltantes <- function(dataframe1) {
+  cat("Datos faltantes(NA) en las siguientes columnas: \n")
+  datf <- apply(X = is.na(dataframe1), MARGIN = 2, FUN = sum)
+  return(datf)
+}
+```
+
+
+
+## Clasificación de Dataframe
+Esta función recibe un data frame y realiza la clasificación de cada una de las columnas por la clase que cumple. En caso de no recibir un dataframe sino otro tipo de estructura, devuelve un mensaje en pantalla
+
+```{r, echo=FALSE}
+clasificacion <- function(dataframe1) {
+  if(is.data.frame(dataframe1) == FALSE) { return("Ingrese un Data frame")} else {
+    result <- c()
+    for(j in 1:ncol(dataframe1))
+      result[j] <- class(dataframe1[,j])
+    result1 <- c(result)
+
+    return(result1)
+  }
+}
+```

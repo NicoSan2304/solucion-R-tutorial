@@ -23,7 +23,9 @@ clasificacion <- function(dataframe1) {
     result <- c()
     for(j in 1:ncol(dataframe1))
       result[j] <- class(dataframe1[,j])
+    result1 <- c(result)
 
-    return(result)
+    return(result1)
   }
 }
+

@@ -7,7 +7,7 @@ library(tidyverse)
 feminicidios <- read.csv("cases_2017.csv", na.strings = c("Sin información","NA"))
 
 edad <- unique(feminicidios$edad)
-
+view(edad)
 
 ui <- fluidPage(
   
@@ -38,11 +38,22 @@ ui <- fluidPage(
 # Define server logic to summarize and view selected dataset ----
 server <- function(input, output) {
   
-  output$edadesrango <-  renderPlot({
-    hist(input$rango_edad, 
-         main = "Edades Victimas feminicidios", 
-         ylab = "Edad", 
-         col = "lightblue")
+  data_viz <- reactive({
+    df <- feminicidios
+    if (!is.null(input$rango_edad)) {
+      df <- df %>% 
+        dplyr::filter(edad %in% input$rango_edad)
+    }
+    casos_1 <-  df %>%
+      group_by(edad) %>%
+      tally() %>%
+      select(edad, n)
+    casos_1
+  })  
+  
+  output$edadesrango <- renderPlotly({
+    req(data_viz())
+    plot_ly(data_viz(), x = ~edad, y = ~n, type = "bar")
   })
 }
 

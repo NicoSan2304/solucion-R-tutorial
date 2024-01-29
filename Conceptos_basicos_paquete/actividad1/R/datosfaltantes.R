@@ -18,6 +18,7 @@
 #' misDatos <- data.frame(edad,tiempo,sexo)
 #' datos_faltantes(misDatos)
 #'
+
 datos_faltantes <- function(dataframe1) {
   cat("Datos faltantes(NA) en las siguientes columnas: \n")
   datf <- apply(X = is.na(dataframe1), MARGIN = 2, FUN = sum)
