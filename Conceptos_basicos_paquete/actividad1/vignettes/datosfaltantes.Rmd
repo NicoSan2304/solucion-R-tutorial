@@ -30,6 +30,23 @@ datos_faltantes <- function(dataframe1) {
 }
 ```
 
+# Crear un data frame de ejemplo
+```{r}
+ejemplo_df <- data.frame(
+  columna1 = c(1, 2, NA, 4, 5),
+  columna2 = c(NA, 2, 3, NA, 5),
+  columna3 = c(1, 2, 3, 4, 5))
+```
+
+# Aplicar la función datos_faltantes al data frame de ejemplo
+```{r}
+datos_faltantes(ejemplo_df)
+```
+
+
+
+
+
 
 
 ## Clasificación de Dataframe
@@ -46,4 +63,17 @@ clasificacion <- function(dataframe1) {
     return(result1)
   }
 }
+```
+
+# Crear un data frame de ejemplo
+```{r}
+ejemplo_df <- data.frame(
+  columna_numerica = c(1, 2, 3, 4, 5),
+  columna_factor = factor(c("a", "b", "a", "b", "a")),
+  columna_caracter = c("A", "B", "C", "D", "E")
+)
+```
+# Aplicar la función clasificacion al data frame de ejemplo
+```{r}
+clasificacion(ejemplo_df)
 ```
